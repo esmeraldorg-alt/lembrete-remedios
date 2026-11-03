@@ -28,6 +28,11 @@ jobs:
           mkdir -p android/app/src/main/assets/www
           cp index.html style.css app.js sw.js manifest.webmanifest icon.svg android/app/src/main/assets/www/
 
+      - name: Gravar a versão no app (build e commit)
+        run: |
+          sed -i "s/__VERSAO__/build ${GITHUB_RUN_NUMBER} · ${GITHUB_SHA::7}/" android/app/src/main/assets/www/app.js
+          grep -n "VERSAO_BRUTA = " android/app/src/main/assets/www/app.js
+
       - name: Compilar APK
         working-directory: android
         run: gradle :app:assembleDebug --no-daemon

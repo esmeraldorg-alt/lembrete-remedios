@@ -5,6 +5,9 @@
   const SONECA_MIN = 10;
   // Dentro do APK, os dados e os alarmes ficam no Android (funcionam com o app fechado)
   const NATIVO = typeof window.AndroidBridge !== 'undefined';
+  // Preenchido automaticamente na compilação do APK (número do build e commit)
+  const VERSAO_BRUTA = '__VERSAO__';
+  const VERSAO = VERSAO_BRUTA.startsWith('__') ? 'desenvolvimento (web)' : VERSAO_BRUTA;
   const LEN_ANEL = 2 * Math.PI * 34;
   const ROTULOS = {
     pendente: 'Pendente',
@@ -679,6 +682,8 @@
   }
 
   // ---------- Início ----------
+  $('versao').textContent = 'Versão: ' + VERSAO;
+  setTimeout(() => toast('Versão ' + VERSAO), 900);
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('sw.js').catch(() => {});
