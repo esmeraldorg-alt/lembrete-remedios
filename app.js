@@ -89,7 +89,7 @@
       }
       return true;
     } catch (e) {
-      alert('Não foi possível salvar os dados neste aparelho.');
+      alert('Não foi possível salvar os dados neste aparelho.\n\nDetalhe técnico: ' + (e && (e.name + ': ' + e.message)) + (NATIVO ? ' [nativo]' : ' [web]'));
       return false;
     }
   }
