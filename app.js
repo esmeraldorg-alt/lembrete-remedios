@@ -3,6 +3,8 @@
 
   const CHAVE = 'lembrete-remedios-v1';
   const SONECA_MIN = 10;
+  // Dentro do APK, os dados e os alarmes ficam no Android (funcionam com o app fechado)
+  const NATIVO = typeof window.AndroidBridge !== 'undefined';
   const LEN_ANEL = 2 * Math.PI * 34;
   const ROTULOS = {
     pendente: 'Pendente',
@@ -67,7 +69,7 @@
 
   function carregar() {
     try {
-      const bruto = localStorage.getItem(CHAVE);
+      const bruto = NATIVO ? window.AndroidBridge.lerEstado() : localStorage.getItem(CHAVE);
       if (bruto) return Object.assign(vazio(), JSON.parse(bruto));
     } catch (e) {
       /* armazenamento indisponível ou dado corrompido: começa vazio */
@@ -79,7 +81,9 @@
 
   function salvar() {
     try {
-      localStorage.setItem(CHAVE, JSON.stringify(estado));
+      const json = JSON.stringify(estado);
+      if (NATIVO) window.AndroidBridge.gravarEstado(json);
+      else localStorage.setItem(CHAVE, json);
       return true;
     } catch (e) {
       alert('Não foi possível salvar os dados neste aparelho.');
@@ -205,6 +209,8 @@
   let ultimaHora = '';
 
   function verificarHorarios(agora) {
+    // No APK o alarme é nativo (AlarmManager); aqui só evitamos disparo duplicado
+    if (NATIVO) return false;
     const dia = diaDe(agora);
     const hora = horaDe(agora);
     const agoraMs = agora.getTime();
@@ -246,6 +252,14 @@
   }
 
   function tick() {
+    // No APK, a ação feita na notificação muda os dados no Android: recarrega e redesenha
+    if (NATIVO) {
+      const novo = carregar();
+      if (JSON.stringify(novo) !== JSON.stringify(estado)) {
+        estado = novo;
+        renderizar();
+      }
+    }
     const agora = new Date();
     const hora = horaDe(agora);
     const mudouHora = hora !== ultimaHora;
@@ -383,6 +397,11 @@
   }
 
   $('ativar').addEventListener('click', async () => {
+    if (NATIVO) {
+      window.AndroidBridge.pedirPermissoes();
+      toast('Permissão de notificações solicitada 🔔');
+      return;
+    }
     garantirAudio();
     bipe();
     if ('Notification' in window && Notification.permission === 'default') {

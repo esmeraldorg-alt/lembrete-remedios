@@ -1,7 +1,10 @@
 package br.com.lembrete.remedios;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -20,13 +23,23 @@ public class MainActivity extends Activity {
         web = new WebView(this);
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
-        s.setDomStorageEnabled(true);          // guarda os remédios e as doses
-        s.setMediaPlaybackRequiresUserGesture(false); // permite o som do alarme
+        s.setDomStorageEnabled(true);
+        s.setMediaPlaybackRequiresUserGesture(false);
+        web.addJavascriptInterface(new Ponte(this), "AndroidBridge");
         web.setWebViewClient(new WebViewClient());
         web.setWebChromeClient(new WebChromeClient());
         web.loadUrl("file:///android_asset/www/index.html");
 
         setContentView(web);
+        pedirPermissoes();
+        Agenda.reagendar(this);
+    }
+
+    void pedirPermissoes() {
+        if (Build.VERSION.SDK_INT >= 33
+                && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+        }
     }
 
     @Override

@@ -66,3 +66,13 @@ Esta pasta é um projeto independente dentro do repositório `gerador-cartazes`.
 - Ao marcar uma dose como **Tomada** (na lista ou no alarme), o estoque dá baixa automaticamente. A baixa acontece só uma vez por dose.
 - **+ Comprei** soma a quantidade comprada. **Corrigir contagem** define o número exato que restou na caixa.
 - O app calcula **para quantos dias dá** (quantidade ÷ número de horários por dia). Com 5 dias ou menos, o cartão fica em vermelho e aparece um aviso.
+
+## Alarme com o app fechado (APK Android)
+
+O APK guarda os dados no Android e agenda cada horário com o `AlarmManager`. Por isso:
+- O alarme toca **mesmo com o app fechado**, com o celular bloqueado ou em modo soneca.
+- Depois de reiniciar o celular, os alarmes são agendados de novo automaticamente.
+- Os botões **Tomei**, **Soneca 10 min** e **Pular** funcionam direto na notificação ou na tela do alarme, e o estoque é atualizado na hora.
+- Na primeira abertura, aceite a permissão de notificações. Em alguns celulares (Xiaomi, Samsung, Motorola), também é preciso desligar a **economia de bateria** para o app e permitir **Notificações em tela cheia**.
+
+A versão web (no navegador) continua mostrando o alarme apenas com a página aberta.
