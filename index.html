@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6d5efc">
+<meta name="description" content="Lembrete de horários para tomar remédios, com alarme, soneca e registro de doses.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<title>Lembrete de Remédios</title>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-topo">
+    <div>
+      <p id="saudacao" class="saudacao"></p>
+      <h1 id="data" class="data"></h1>
+    </div>
+    <button id="ativar" type="button" class="btn-pill">🔔 Ativar alertas</button>
+  </div>
+
+  <div class="resumo">
+    <div class="anel-wrap">
+      <svg viewBox="0 0 80 80" class="anel" aria-hidden="true">
+        <circle class="anel-base" cx="40" cy="40" r="34"></circle>
+        <circle id="anel" class="anel-progresso" cx="40" cy="40" r="34"></circle>
+      </svg>
+      <span id="anel-num" class="anel-num">0%</span>
+    </div>
+    <div class="resumo-texto">
+      <strong id="resumo-titulo">Nenhuma dose hoje</strong>
+      <span id="resumo-sub">Cadastre um remédio para começar</span>
+    </div>
+  </div>
+</header>
+
+<main class="conteudo">
+
+  <section>
+    <div class="sec-head"><h2>Doses de hoje</h2></div>
+    <div id="lista-hoje" class="timeline"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Meus remédios</h2></div>
+    <div id="lista-remedios" class="grade"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Últimos 7 dias</h2></div>
+    <ul id="historico" class="hist"></ul>
+  </section>
+
+  <p class="aviso">
+    Este app é apenas um lembrete e não substitui a orientação do médico ou do farmacêutico.
+    O alarme só toca com a página aberta: ative também um alarme no celular.
+  </p>
+
+</main>
+
+<button id="abrir-form" type="button" class="fab" aria-label="Cadastrar remédio">+</button>
+
+<div id="sheet" class="overlay">
+  <div class="folha" role="dialog" aria-modal="true" aria-labelledby="titulo-folha">
+    <div class="folha-topo">
+      <h2 id="titulo-folha">Novo remédio</h2>
+      <button id="fechar-sheet" type="button" class="fechar" aria-label="Fechar">×</button>
+    </div>
+    <form id="form-remedio" class="form" autocomplete="off">
+      <label>Nome do remédio
+        <input id="nome" type="text" maxlength="60" required placeholder="Ex.: Losartana">
+      </label>
+      <label>Dose
+        <input id="dose" type="text" maxlength="40" placeholder="Ex.: 1 comprimido">
+      </label>
+
+      <div class="duas">
+        <label>Quantos comprimidos tem
+          <input id="qtd" type="number" min="0" max="999" inputmode="numeric" placeholder="Ex.: 20">
+        </label>
+        <label>Por cartela
+          <input id="por-cartela" type="number" min="1" max="60" inputmode="numeric" value="10">
+        </label>
+      </div>
+
+      <div class="campo">
+        <span class="rotulo">Horários</span>
+        <div class="presets">
+          <button type="button" class="preset" data-hora="08:00">☀️ Manhã 08:00</button>
+          <button type="button" class="preset" data-hora="12:00">🍽️ Almoço 12:00</button>
+          <button type="button" class="preset" data-hora="20:00">🌙 Noite 20:00</button>
+        </div>
+        <div class="linha-horario">
+          <input id="hora-nova" type="time" aria-label="Outro horário">
+          <button id="btn-horario" type="button" class="btn-sec">Adicionar</button>
+        </div>
+        <ul id="horarios-novos" class="chips"></ul>
+      </div>
+
+      <button type="submit" class="btn-principal">Salvar remédio</button>
+    </form>
+  </div>
+</div>
+
+<div id="alarme" class="alarme" hidden role="alertdialog" aria-live="assertive">
+  <div class="alarme-caixa">
+    <div class="alarme-icone">💊</div>
+    <p class="alarme-titulo">Hora do remédio</p>
+    <p id="alarme-nome" class="alarme-nome"></p>
+    <p id="alarme-dose" class="alarme-dose"></p>
+    <p id="alarme-hora" class="alarme-hora"></p>
+    <div class="alarme-acoes">
+      <button id="alarme-tomei" type="button" class="btn-principal">✓ Tomei</button>
+      <button id="alarme-soneca" type="button" class="btn-sec">⏰ Lembrar em 10 min</button>
+      <button id="alarme-pular" type="button" class="btn-link">Pular esta dose</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
