@@ -82,8 +82,11 @@
   function salvar() {
     try {
       const json = JSON.stringify(estado);
-      if (NATIVO) window.AndroidBridge.gravarEstado(json);
-      else localStorage.setItem(CHAVE, json);
+      if (NATIVO) {
+        if (window.AndroidBridge.gravarEstado(json) === false) throw new Error('gravação nativa falhou');
+      } else {
+        localStorage.setItem(CHAVE, json);
+      }
       return true;
     } catch (e) {
       alert('Não foi possível salvar os dados neste aparelho.');
