@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Relógio branco com uma cápsula de remédio rosa por cima -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Sino da esquerda e da direita -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M32,30 m-7,0 a7,7 0,1 1 14,0 a7,7 0,1 1 -14,0" />
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M76,30 m-7,0 a7,7 0,1 1 14,0 a7,7 0,1 1 -14,0" />
+
+    <!-- Corpo do relógio -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M54,30 m-26,0 a26,26 0,1 1 52,0 a26,26 0,1 1 -52,0" />
+
+    <!-- Ponteiro do relógio -->
+    <path android:fillColor="#6D5EFC"
+        android:pathData="M52,40 h4 v16 h-4 z" />
+    <path android:fillColor="#6D5EFC"
+        android:pathData="M54,56 h12 v4 h-12 z" />
+
+    <!-- Cápsula de remédio, inclinada -->
+    <group android:pivotX="54" android:pivotY="58" android:rotation="-40">
+        <path android:fillColor="#FF5D8F"
+            android:pathData="M42,50 H66 A8,8 0 0 1 66,66 H42 A8,8 0 0 1 42,50 Z" />
+        <path android:fillColor="#FFFFFF"
+            android:pathData="M42,50 H54 V66 H42 A8,8 0 0 1 42,50 Z" />
+    </group>
+</vector>

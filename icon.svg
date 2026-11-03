@@ -1,8 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="110" fill="#0f766e"/>
-  <circle cx="256" cy="290" r="150" fill="#ffffff"/>
-  <rect x="226" y="120" width="60" height="50" rx="12" fill="#ffffff"/>
-  <path d="M256 200 V290 L310 320" fill="none" stroke="#0f766e" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
-  <rect x="150" y="60" width="50" height="40" rx="10" fill="#ffffff" transform="rotate(-25 175 80)"/>
-  <rect x="312" y="60" width="50" height="40" rx="10" fill="#ffffff" transform="rotate(25 337 80)"/>
+  <rect width="512" height="512" rx="110" fill="#6D5EFC"/>
+  <circle cx="150" cy="150" r="46" fill="#FFFFFF"/>
+  <circle cx="362" cy="150" r="46" fill="#FFFFFF"/>
+  <circle cx="256" cy="278" r="158" fill="#FFFFFF"/>
+  <path d="M244,160 h24 v120 h-24 z" fill="#6D5EFC"/>
+  <path d="M256,268 h72 v24 h-72 z" fill="#6D5EFC"/>
+  <g transform="rotate(-40 256 278)">
+    <path d="M186,240 H326 A38,38 0 0 1 326,316 H186 A38,38 0 0 1 186,240 Z" fill="#FF5D8F"/>
+    <path d="M186,240 H256 V316 H186 A38,38 0 0 1 186,240 Z" fill="#FFFFFF"/>
+  </g>
 </svg>
