@@ -423,6 +423,7 @@
   let horariosNovos = [];
 
   function abrirSheet() {
+    $('inicio').value = diaDe(new Date());
     $('sheet').classList.add('aberto');
     setTimeout(() => $('nome').focus(), 250);
   }
@@ -471,6 +472,14 @@
     });
   }
 
+  document.querySelectorAll('[data-dia]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const d = new Date();
+      if (b.dataset.dia === 'amanha') d.setDate(d.getDate() + 1);
+      $('inicio').value = diaDe(d);
+    })
+  );
+
   document.querySelectorAll('[data-hora]').forEach((b) =>
     b.addEventListener('click', () => adicionarHorario(b.dataset.hora))
   );
@@ -489,6 +498,15 @@
     if (!nome) return toast('Digite o nome do remédio');
     if (!horariosNovos.length) return toast('Adicione pelo menos um horário');
 
+    let inicio = $('inicio').value;
+    if (!inicio) return toast('Escolha a data de início');
+    const agora = new Date();
+    if (inicio === diaDe(agora) && horariosNovos.some((h) => h < horaDe(agora)) &&
+        confirm('Algum desses horários já passou hoje. Começar amanhã?')) {
+      const amanha = new Date();
+      amanha.setDate(amanha.getDate() + 1);
+      inicio = diaDe(amanha);
+    }
     const qtd = parseInt($('qtd').value, 10);
     const por = parseInt($('por-cartela').value, 10);
 
@@ -497,6 +515,7 @@
       nome,
       dose,
       horarios: horariosNovos.slice(),
+      inicio,
       criadoEm: diaDe(new Date()),
       estoque: Number.isFinite(qtd) && qtd >= 0
         ? { quantidade: qtd, porCartela: Number.isFinite(por) && por > 0 ? por : 10 }
@@ -559,10 +578,10 @@
     );
     itens.sort((a, b) => a.h.localeCompare(b.h));
 
-    // Remédio cadastrado hoje: horários que já passaram só começam amanhã
-    const agoraHora = horaDe(new Date());
+    // Remédio que começa em outra data: só entra na lista de hoje quando a data chegar
     itens.forEach((i) => {
-      i.amanha = i.r.criadoEm === dia && i.h < agoraHora;
+      const ini = i.r.inicio || i.r.criadoEm || '';
+      i.amanha = ini > dia;
     });
 
     const hoje = itens.filter((i) => !i.amanha);
@@ -607,7 +626,10 @@
           el('div', { class: 'hora-grande', texto: h }),
           el('div', { class: 'dose-info' }, [
             el('strong', { texto: r.nome }),
-            el('span', { texto: (r.dose ? r.dose + ' · ' : '') + ROTULOS[st] })
+            el('span', {
+              texto: (r.dose ? r.dose + ' · ' : '') +
+                (st === 'amanha' ? 'Começa em ' + formatarDia(r.inicio || r.criadoEm) : ROTULOS[st])
+            })
           ]),
           acao
         ])
@@ -647,7 +669,7 @@
               })
             ]),
             el('h3', { texto: r.nome }),
-            el('p', { class: 'dose-txt', texto: r.dose || 'Dose não informada' }),
+            el('p', { class: 'dose-txt', texto: (r.dose || 'Dose não informada') + (r.inicio ? ' · desde ' + formatarDia(r.inicio) : '') }),
             el('div', { class: 'horas' }, r.horarios.map((h) => el('span', { texto: h })))
           ]),
           desenharEstoque(r)

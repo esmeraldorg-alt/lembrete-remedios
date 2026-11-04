@@ -38,10 +38,11 @@ final class Agenda {
                 JSONObject r = rems.getJSONObject(i);
                 String id = r.getString("id");
                 JSONArray horas = r.getJSONArray("horarios");
+                String inicio = r.optString("inicio", r.optString("criadoEm", ""));
                 for (int j = 0; j < horas.length(); j++) {
                     String hora = horas.getString(j);
                     String chave = Estado.chave(id, hora);
-                    Calendar alvo = proximoDisparo(estado, chave, hora, agora);
+                    Calendar alvo = proximoDisparo(estado, chave, hora, agora, inicio);
                     String key = "d|" + chave;
 
                     Intent in = intencao(ctx, key);
@@ -90,7 +91,7 @@ final class Agenda {
     }
 
     /** Próximo horário do remédio: hoje, se ainda não passou e não foi registrado; senão amanhã. */
-    private static Calendar proximoDisparo(JSONObject estado, String chave, String hora, long agora) {
+    private static Calendar proximoDisparo(JSONObject estado, String chave, String hora, long agora, String inicio) {
         String[] p = hora.split(":");
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(agora);
@@ -98,6 +99,15 @@ final class Agenda {
         c.set(Calendar.MINUTE, Integer.parseInt(p[1]));
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
+
+        // Remédio que começa em data futura: primeiro disparo nessa data
+        if (!inicio.isEmpty() && inicio.compareTo(Estado.dia(Calendar.getInstance())) > 0) {
+            String[] d = inicio.split("-");
+            c.set(Calendar.YEAR, Integer.parseInt(d[0]));
+            c.set(Calendar.MONTH, Integer.parseInt(d[1]) - 1);
+            c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(d[2]));
+            return c;
+        }
 
         boolean feitoHoje = Estado.registro(estado, Estado.dia(Calendar.getInstance()), chave) != null;
         if (c.getTimeInMillis() <= agora || feitoHoje) {
