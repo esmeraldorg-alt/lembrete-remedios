@@ -14,14 +14,16 @@
     tomado: 'Tomado',
     pulado: 'Pulado',
     adiado: 'Adiado',
-    atrasado: 'Atrasado'
+    atrasado: 'Atrasado',
+    amanha: 'Começa amanhã'
   };
   const ICONES = {
     pendente: '⏳',
     tomado: '✅',
     pulado: '⏭️',
     adiado: '🔁',
-    atrasado: '⚠️'
+    atrasado: '⚠️',
+    amanha: '🌙'
   };
   const CORES_CARTAO = [
     'linear-gradient(135deg,#6d5efc,#8b7bff)',
@@ -495,6 +497,7 @@
       nome,
       dose,
       horarios: horariosNovos.slice(),
+      criadoEm: diaDe(new Date()),
       estoque: Number.isFinite(qtd) && qtd >= 0
         ? { quantidade: qtd, porCartela: Number.isFinite(por) && por > 0 ? por : 10 }
         : null
@@ -556,8 +559,15 @@
     );
     itens.sort((a, b) => a.h.localeCompare(b.h));
 
-    const tomadas = itens.filter((i) => statusDose(dia, i.chave, i.h) === 'tomado').length;
-    renderResumo(itens.length, tomadas);
+    // Remédio cadastrado hoje: horários que já passaram só começam amanhã
+    const agoraHora = horaDe(new Date());
+    itens.forEach((i) => {
+      i.amanha = i.r.criadoEm === dia && i.h < agoraHora;
+    });
+
+    const hoje = itens.filter((i) => !i.amanha);
+    const tomadas = hoje.filter((i) => statusDose(dia, i.chave, i.h) === 'tomado').length;
+    renderResumo(hoje.length, tomadas);
 
     if (!itens.length) {
       lista.appendChild(
@@ -570,9 +580,9 @@
       return;
     }
 
-    itens.forEach(({ r, h, chave }) => {
-      const st = statusDose(dia, chave, h);
-      const feito = st === 'tomado' || st === 'pulado';
+    itens.forEach(({ r, h, chave, amanha }) => {
+      const st = amanha ? 'amanha' : statusDose(dia, chave, h);
+      const feito = st === 'tomado' || st === 'pulado' || st === 'amanha';
       const info = { nome: r.nome, hora: h, remedioId: r.id };
 
       const acao = feito
