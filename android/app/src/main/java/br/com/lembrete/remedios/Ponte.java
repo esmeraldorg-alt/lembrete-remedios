@@ -10,6 +10,7 @@ import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import org.json.JSONObject;
 import android.webkit.JavascriptInterface;
 
 /** Ponte entre o app web (app.js) e o Android: dados e permissões. Nunca lança erro para o JavaScript. */
@@ -35,6 +36,15 @@ public final class Ponte {
     public boolean gravarEstado(String json) {
         try {
             Estado.gravarJson(activity, json);
+            int n;
+            try {
+                n = new JSONObject(json).getJSONArray("remedios").length();
+            } catch (Throwable t) {
+                n = -1;
+            }
+            activity.getSharedPreferences("diag", android.content.Context.MODE_PRIVATE).edit()
+                    .putString("ultimo_salvamento", new Date().toString() + " · remédios recebidos: " + n)
+                    .remove("erro_leitura").apply();
         } catch (Throwable t) {
             Log.e(TAG, "Falha ao gravar dados", t);
             return false;
@@ -73,7 +83,10 @@ public final class Ponte {
             return "Notificações ativas: " + (ativas ? "SIM" : "NÃO")
                     + "\nPermissão de notificação: " + (perm ? "SIM" : "NÃO")
                     + "\n\nPróximos alarmes agendados:\n" + Agenda.resumo(activity)
-                    + "\nUm alarme de teste foi disparado agora.";
+                    + "\nUm alarme de teste foi disparado agora."
+                    + "\n\nÚltimo dado recebido do site: " + activity.getSharedPreferences("diag", Context.MODE_PRIVATE).getString("ultimo_salvamento", "nenhum")
+                    + "\nErro ao ler dados: " + activity.getSharedPreferences("diag", Context.MODE_PRIVATE).getString("erro_leitura", "nenhum")
+                    + "\nRemédios guardados no Android: " + Estado.carregar(activity).optJSONArray("remedios").length();
         } catch (Throwable t) {
             return "Erro no teste: " + t;
         }

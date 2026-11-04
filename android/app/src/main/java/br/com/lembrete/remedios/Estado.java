@@ -30,7 +30,9 @@ final class Estado {
             String s = lerJson(c);
             if (s != null && !s.isEmpty()) return new JSONObject(s);
         } catch (JSONException e) {
-            // dado inválido: começa vazio
+            // dado inválido: começa vazio, mas registra o erro para o teste
+            c.getSharedPreferences("diag", Context.MODE_PRIVATE).edit()
+                    .putString("erro_leitura", String.valueOf(e)).apply();
         }
         JSONObject o = new JSONObject();
         try {

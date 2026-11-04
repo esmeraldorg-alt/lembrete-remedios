@@ -87,6 +87,7 @@ final class Agenda {
             }
         } catch (JSONException e) {
             // dado incompleto: agenda o que foi possível
+            resumo.append("Erro ao ler horários: ").append(e).append('\n');
         }
 
         // Cancela alarmes que não existem mais (remédio removido, soneca vencida etc.)
