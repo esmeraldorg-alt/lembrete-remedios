@@ -401,13 +401,16 @@
   // ---------- Ativar alertas ----------
   function atualizarBotaoAtivar() {
     const ativo = 'Notification' in window && Notification.permission === 'granted';
+    if (NATIVO) {
+      $('ativar').textContent = '🔔 Testar alarme';
+      return;
+    }
     $('ativar').textContent = ativo ? '🔔 Alertas ativos' : '🔔 Ativar alertas';
   }
 
   $('ativar').addEventListener('click', async () => {
     if (NATIVO) {
-      window.AndroidBridge.pedirPermissoes();
-      toast('Permissão de notificações solicitada 🔔');
+      alert(window.AndroidBridge.testar());
       return;
     }
     garantirAudio();

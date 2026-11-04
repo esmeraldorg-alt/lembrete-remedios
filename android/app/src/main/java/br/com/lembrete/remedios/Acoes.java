@@ -14,6 +14,10 @@ final class Acoes {
     private Acoes() {}
 
     static void executar(Context ctx, String acao, Intent in) {
+        if (in.getBooleanExtra("teste", false)) {
+            Alarme.parar(ctx);
+            return;
+        }
         JSONObject estado = Estado.carregar(ctx);
         String chave = Estado.nz(in.getStringExtra("chave"));
         String remedioId = Estado.nz(in.getStringExtra("remedioId"));

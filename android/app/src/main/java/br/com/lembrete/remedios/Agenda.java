@@ -25,11 +25,16 @@ final class Agenda {
 
     private Agenda() {}
 
+    static String resumo(Context ctx) {
+        return ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("resumo", "(ainda não agendado)\n");
+    }
+
     static void reagendar(Context ctx) {
         JSONObject estado = Estado.carregar(ctx);
         AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
         SharedPreferences prefs = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         Set<String> novas = new HashSet<>();
+        StringBuilder resumo = new StringBuilder();
         long agora = System.currentTimeMillis();
 
         try {
@@ -55,6 +60,7 @@ final class Agenda {
                     in.putExtra("soneca", false);
 
                     novas.add(key);
+                    resumo.append(hora).append(" de ").append(Estado.dia(alvo)).append(" · ").append(r.optString("nome")).append('\n');
                     agendar(ctx, am, key, alvo.getTimeInMillis(), in);
                 }
             }
@@ -87,7 +93,9 @@ final class Agenda {
         for (String antiga : prefs.getStringSet(KEY, new HashSet<String>())) {
             if (!novas.contains(antiga)) cancelar(ctx, am, antiga);
         }
-        prefs.edit().putStringSet(KEY, novas).apply();
+        prefs.edit().putStringSet(KEY, novas)
+                .putString("resumo", resumo.length() == 0 ? "(nenhum horário cadastrado)\n" : resumo.toString())
+                .apply();
     }
 
     /** Próximo horário do remédio: hoje, se ainda não passou e não foi registrado; senão amanhã. */
