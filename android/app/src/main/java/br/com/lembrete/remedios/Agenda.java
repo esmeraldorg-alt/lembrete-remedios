@@ -137,7 +137,12 @@ final class Agenda {
         PendingIntent mostrar = PendingIntent.getActivity(ctx, 0,
                 new Intent(ctx, MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        am.setAlarmClock(new AlarmManager.AlarmClockInfo(quando, mostrar), pi);
+        try {
+            am.setAlarmClock(new AlarmManager.AlarmClockInfo(quando, mostrar), pi);
+        } catch (SecurityException e) {
+            // Sem permissão de alarme exato: usa o agendamento mais próximo possível
+            am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, quando, pi);
+        }
     }
 
     private static void cancelar(Context ctx, AlarmManager am, String key) {
