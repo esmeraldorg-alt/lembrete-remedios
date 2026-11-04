@@ -85,9 +85,9 @@ final class Agenda {
                 novas.add(key);
                 agendar(ctx, am, key, quando, in);
             }
-        } catch (JSONException e) {
-            // dado incompleto: agenda o que foi possível
-            resumo.append("Erro ao ler horários: ").append(e).append('\n');
+        } catch (Exception e) {
+            // falha no agendamento: mostra o erro no teste e segue
+            resumo.append("Erro ao agendar: ").append(e).append('\n');
         }
 
         // Cancela alarmes que não existem mais (remédio removido, soneca vencida etc.)
