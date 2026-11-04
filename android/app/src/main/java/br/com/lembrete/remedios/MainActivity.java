@@ -19,6 +19,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mostrarErroAnterior();
 
         web = new WebView(this);
         WebSettings s = web.getSettings();
@@ -32,7 +33,33 @@ public class MainActivity extends Activity {
 
         setContentView(web);
         pedirPermissoes();
-        Agenda.reagendar(this);
+        try {
+            Agenda.reagendar(this);
+        } catch (Throwable t) {
+            android.util.Log.e("LembreteRemedios", "Falha ao agendar alarmes", t);
+        }
+    }
+
+    /** Se o app travou antes, mostra o erro completo para copiar. */
+    private void mostrarErroAnterior() {
+        android.content.SharedPreferences d = getSharedPreferences(App.DIAG, MODE_PRIVATE);
+        String erro = d.getString("erro", null);
+        if (erro == null) return;
+        d.edit().remove("erro").commit();
+
+        android.widget.ScrollView scroll = new android.widget.ScrollView(this);
+        android.widget.TextView tv = new android.widget.TextView(this);
+        tv.setText(erro);
+        tv.setTextIsSelectable(true);
+        tv.setTextSize(12);
+        int pad = (int) (16 * getResources().getDisplayMetrics().density);
+        tv.setPadding(pad, pad, pad, pad);
+        scroll.addView(tv);
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("O app travou na última vez")
+                .setView(scroll)
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     void pedirPermissoes() {
